@@ -32,17 +32,32 @@ const { GetContactDetail } = require('./apis/user/getContactDetails');
 require('dotenv').config();
 
 const app = express()
-const PORT = process.env.PORT
+const PORTS = 8001;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
+// app.use(
+//     session({
+//         secret: "secret",
+//         resave: false,
+//         saveUninitialized: true,
+//     })
+// );
+
 app.use(
     session({
-        secret: "secret",
+        secret: "your-secret-key",
         resave: false,
         saveUninitialized: true,
+        cookie: {
+            secure: false,
+            httpOnly: true,
+            // sameSite: "none",
+            maxAge: 1000 * 60 * 60 * 24 //oneDay
+        }
     })
 );
+
 app.use(
     cors({
         origin: ["http://localhost:3001", "http://localhost:3000"],
@@ -90,4 +105,4 @@ app.post('/logout', Logout);
 
 connectDB();
 
-app.listen(PORT, () => console.log(`Server started on PORT ${PORT}!`))
+app.listen(process.env.PORT || PORTS, () => console.log(`Server started on PORT ${PORTS}!`))
